@@ -4,10 +4,10 @@ pub type KeyPair {
 
 @external(javascript, "./crypto_js.mjs", "generateKeyPairRsa")
 pub fn generate_key_pair_rsa() -> KeyPair {
-  todo
+  todo as "javascript target only"
 }
 
 @external(javascript, "./crypto_js.mjs", "generateKeyPairEc")
 pub fn generate_key_pair_ec() -> KeyPair {
-  todo
+  todo as "javascript target only"
 }
