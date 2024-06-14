@@ -4,6 +4,7 @@ import gleam/io
 import gleam/javascript/promise
 import gleam/json.{object, string}
 import gleam/option.{type Option, None, Some}
+import gleam/string
 import jwt
 
 pub fn main() {
@@ -20,13 +21,16 @@ pub fn main() {
     |> jwt.encode_string(keypair.private_key, "RS256"),
   )
 
-  io.println("PRIVATE KEY:")
-  io.println(keypair.private_key)
+  // io.println("PRIVATE KEY:")
+  // io.println(keypair.private_key)
 
   io.println("PUBLIC KEY:")
   io.println(keypair.public_key)
 
-  io.println("JWT:")
+  io.println("PUBLIC KEY (single line):")
+  io.println(keypair.public_key |> string.trim() |> string.replace("\n", "\\n"))
+
+  io.println("\nJWT:")
   io.println(jwt)
 
   promise.resolve("")
