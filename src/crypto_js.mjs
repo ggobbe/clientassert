@@ -1,8 +1,8 @@
-import { generateKeyPairSync } from "node:crypto";
+import crypto, { generateKeyPairSync } from "node:crypto";
 
 export function generateKeyPairRsa() {
   const { publicKey, privateKey } = generateKeyPairSync("rsa", {
-    modulusLength: 4096,
+    modulusLength: 2048, // 2048, 4096
     publicKeyEncoding: {
       type: "spki",
       format: "pem",
@@ -17,7 +17,7 @@ export function generateKeyPairRsa() {
 
 export function generateKeyPairEc() {
   const { publicKey, privateKey } = generateKeyPairSync("ec", {
-    namedCurve: "P-521",
+    namedCurve: "P-256", // P-256, P-384, P-521
     publicKeyEncoding: {
       type: "spki",
       format: "pem",

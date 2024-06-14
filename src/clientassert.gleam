@@ -1,43 +1,40 @@
-import crypto.{KeyPair}
-import gleam/io
-import gwt.{type Jwt, type Unverified, type Verified}
-
 import argv
-import snag
-
-// glint imports
-import glint
+import crypto
+import gleam/io
+import gleam/javascript/promise
+import gleam/json.{object, string}
+import gleam/option.{type Option, None, Some}
+import jwt
 
 pub fn main() {
-  glint.new()
-  |> glint.with_name("clientassert")
-  |> glint.with_pretty_help(glint.default_pretty_help())
-  |> glint.add(
-    at: [],
-    do: glint.command(client_assertion)
-      |> glint.description(
-        "Prints public key and client assertion for subject <SUBJECT>",
-      ),
-  )
-  |> glint.run(argv.load().arguments)
-}
-
-fn client_assertion(input: glint.CommandInput) -> Nil {
-  let subject = case input.args {
-    [subject, ..] -> subject
-    _ -> todo as "handle missing arg"
+  let subject = case parse_args(argv.load().arguments) {
+    Some(s) -> s
+    None -> panic as "args: Subject is required"
   }
 
-  let KeyPair(public_key, private_key) = crypto.generate_key_pair_ec()
+  let keypair = crypto.generate_key_pair_rsa()
 
-  let client_assertion_jwt =
-    gwt.new()
-    |> gwt.set_subject(subject)
-    |> gwt.to_signed_string(gwt.HS512, private_key)
+  use jwt <- promise.await(
+    object([#("sub", string(subject))])
+    |> json.to_string
+    |> jwt.encode_string(keypair.private_key, "RS256"),
+  )
+
+  io.println("PRIVATE KEY:")
+  io.println(keypair.private_key)
 
   io.println("PUBLIC KEY:")
-  io.println(public_key)
+  io.println(keypair.public_key)
 
-  io.println("CLIENT ASSERTION JWT:")
-  io.println(client_assertion_jwt)
+  io.println("JWT:")
+  io.println(jwt)
+
+  promise.resolve("")
+}
+
+fn parse_args(args: List(String)) -> Option(String) {
+  case args {
+    [subject] -> Some(subject)
+    _ -> None
+  }
 }
