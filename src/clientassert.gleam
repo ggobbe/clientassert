@@ -21,8 +21,8 @@ pub fn main() {
     |> jwt.encode_string(keypair.private_key, "RS256"),
   )
 
-  // io.println("PRIVATE KEY:")
-  // io.println(keypair.private_key)
+  io.println("PRIVATE KEY:")
+  io.println(keypair.private_key)
 
   io.println("PUBLIC KEY:")
   io.println(keypair.public_key)
